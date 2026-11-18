@@ -971,11 +971,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: 7d3baff0-ddb4-4280-969c-de164217fc3b
+  cloudProjectId: e26a1c41-9fa2-495e-ba64-98325890bd49
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: VR-Museum
-  organizationId: colbysanderson
+  organizationId: 77a1b222-a10b-41dc-0000-12405f720088
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
