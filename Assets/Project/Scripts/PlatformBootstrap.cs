@@ -23,7 +23,30 @@ public class PlatformBootstrap : MonoBehaviour
         //if vr is not started yet (PC), we try to start it now
         if (manager.activeLoader == null)
         {
-            manager.InitializeLoaderSync();
+            //do we want vr ? (false by default, so the pc never freezes without headset)
+            bool wantVR = false;
+#if UNITY_EDITOR
+            //in the unity editor: we read the "VR Museum > Play in VR" menu checkbox
+            wantVR = UnityEditor.EditorPrefs.GetBool("VRMuseum_PlayInVR", false);
+#else
+            //in the pc build: we look for the "-vr" launch option
+            string[] args = System.Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] == "-vr")
+                {
+                    wantVR = true;
+                }
+            }
+#endif
+            if (wantVR)
+            {
+                manager.InitializeLoaderSync();
+            }
+            else
+            {
+                Debug.Log("[PlatformBootstrap] Play in VR is off, VR not started");
+            }
         }
 
         //if a loader started, we start the headset systems
@@ -32,6 +55,24 @@ public class PlatformBootstrap : MonoBehaviour
             manager.StartSubsystems();
         }
     }
+
+#if UNITY_EDITOR
+    //menu "VR Museum > Play in VR" in the unity top bar: click to check or uncheck it
+    [UnityEditor.MenuItem("VR Museum/Play in VR")]
+    private static void TogglePlayInVR()
+    {
+        bool playInVR = !UnityEditor.EditorPrefs.GetBool("VRMuseum_PlayInVR", false);
+        UnityEditor.EditorPrefs.SetBool("VRMuseum_PlayInVR", playInVR);
+    }
+
+    //unity calls this to draw the check mark next to the menu
+    [UnityEditor.MenuItem("VR Museum/Play in VR", true)]
+    private static bool TogglePlayInVRCheck()
+    {
+        UnityEditor.Menu.SetChecked("VR Museum/Play in VR", UnityEditor.EditorPrefs.GetBool("VRMuseum_PlayInVR", false));
+        return true;
+    }
+#endif
 
     private void Start()
     {
