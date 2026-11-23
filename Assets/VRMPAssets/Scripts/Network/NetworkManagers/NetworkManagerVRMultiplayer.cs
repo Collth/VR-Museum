@@ -21,6 +21,14 @@ namespace XRMultiplayer
         [SerializeField]
         NetworkConfig m_NetworkConfig;
 
+        // NetworkManager's own Awake is private. Declaring Awake here hides it, so Unity never
+        // calls it. Since Netcode for GameObjects 2.13 that base Awake creates the internal logger
+        // and initializes the network prefabs; without it, StartClient()/OnDestroy() throw a
+        // NullReferenceException in player builds (the Editor masks this via OnValidate).
+        // We therefore invoke the base Awake explicitly after applying our settings.
+        static readonly System.Reflection.MethodInfo s_BaseAwake = typeof(NetworkManager).GetMethod(
+            "Awake", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
         ///<inheritdoc/>
         void Awake()
         {
@@ -28,6 +36,11 @@ namespace XRMultiplayer
             RunInBackground = m_RunInBackground;
             NetworkConfig = m_NetworkConfig;
             Utils.s_LogLevel = LogLevel;
+
+            if (s_BaseAwake != null)
+                s_BaseAwake.Invoke(this, null);
+            else
+                Debug.LogError("[NetworkManagerVRMultiplayer] Could not find NetworkManager.Awake - networking will fail in builds.");
         }
     }
 

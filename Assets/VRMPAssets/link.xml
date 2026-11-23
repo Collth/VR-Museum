@@ -1,0 +1,7 @@
+<linker>
+  <!-- Keeps NetworkManager's private Awake in IL2CPP builds.
+       NetworkManagerVRMultiplayer calls it via reflection (see NetworkManagerVRMultiplayer.cs). -->
+  <assembly fullname="Unity.Netcode.Runtime">
+    <type fullname="Unity.Netcode.NetworkManager" preserve="all" />
+  </assembly>
+</linker>
